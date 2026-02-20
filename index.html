@@ -439,6 +439,91 @@
     .game-header { gap: 8px; }
     .login-box { padding: 30px 20px; }
   }
+
+  /* ===== PUZZLE SCREEN ===== */
+  #puzzle-screen { padding: 16px 12px; }
+
+  .puzzle-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+    max-width: 520px; width: 100%;
+  }
+
+  .puzzle-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+    width: 100%; max-width: 600px;
+    margin-bottom: 20px;
+  }
+
+  .puzzle-thumb {
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 10px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+  }
+  .puzzle-thumb:hover { transform: translateY(-5px) scale(1.04); border-color: var(--blue); background: rgba(78,205,196,0.12); }
+  .puzzle-thumb canvas { width: 80px; height: 80px; border-radius: 8px; display: block; margin: 0 auto 8px; }
+  .puzzle-thumb .pt-name { font-family: 'Fredoka One', cursive; font-size: 0.85rem; }
+  .puzzle-thumb .pt-stars { font-size: 0.7rem; color: var(--yellow); margin-top: 2px; }
+
+  .puzzle-area {
+    display: flex; flex-direction: column; align-items: center;
+    width: 100%; max-width: 520px;
+  }
+
+  .puzzle-info-bar {
+    display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; justify-content: center;
+  }
+
+  .puzzle-canvas-wrap {
+    position: relative;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    touch-action: none;
+  }
+
+  #puzzle-canvas { display: block; cursor: grab; }
+  #puzzle-canvas.grabbing { cursor: grabbing; }
+
+  .puzzle-preview-wrap {
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 8px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .puzzle-preview-wrap p { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight:700; }
+  #preview-canvas { border-radius: 8px; display: block; margin: 0 auto; }
+
+  .puzzle-complete-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 300;
+    display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+  .puzzle-complete-overlay.active { display: flex; }
+  .puzzle-complete-box {
+    background: #1c1c38;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 28px;
+    padding: 35px 30px;
+    text-align: center;
+    max-width: 380px; width: 100%;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .puzzle-complete-box canvas { border-radius: 12px; margin: 12px auto; display: block; }
+
 </style>
 </head>
 <body>
@@ -521,7 +606,68 @@
     </div>
   </div>
 
-  <button class="btn-outline" onclick="showLeaderboard()">🏆 Papan Skor</button>
+  <div class="btn-row" style="margin-top:0;">
+    <button class="btn-outline" onclick="showLeaderboard()">🏆 Papan Skor</button>
+    <button class="btn-outline" style="border-color:var(--purple);color:#d8b4fe;" onclick="showPuzzleSelect()">🧩 Puzzle Gambar</button>
+  </div>
+</div>
+
+<!-- ===== PUZZLE SELECT SCREEN ===== -->
+<div id="puzzle-select-screen" class="screen">
+  <div class="logo" style="font-size:2.5rem;margin-bottom:6px;">🧩 Puzzle Gambar</div>
+  <p class="tagline" style="margin-bottom:1.5rem;">Pilih gambar yang ingin kamu susun!</p>
+  <div class="puzzle-select-grid" id="puzzle-select-grid"></div>
+  <button class="btn-outline" onclick="goHome()">⬅ Kembali</button>
+</div>
+
+<!-- ===== PUZZLE GAME SCREEN ===== -->
+<div id="puzzle-screen" class="screen">
+  <div class="puzzle-header">
+    <div class="game-left-btns">
+      <button class="btn-outline btn-sm" onclick="goHome()">⬅ Keluar</button>
+      <button class="btn-outline btn-sm" onclick="showPuzzleSelect()">🧩 Ganti</button>
+    </div>
+    <div class="game-info-chips">
+      <div class="chip player" id="pz-player">🦁 Pemain</div>
+      <div class="chip" style="background:rgba(168,85,247,0.25);border-color:var(--purple);color:#d8b4fe;">⏱ <span id="pz-timer">0:00</span></div>
+      <div class="chip score">⭐ <span id="pz-moves">0</span> langkah</div>
+    </div>
+  </div>
+
+  <div class="puzzle-area">
+    <div class="puzzle-preview-wrap">
+      <p>🖼️ GAMBAR ASLI</p>
+      <canvas id="preview-canvas" width="120" height="120"></canvas>
+    </div>
+    <div class="puzzle-canvas-wrap">
+      <canvas id="puzzle-canvas" width="320" height="320"></canvas>
+    </div>
+    <div style="color:rgba(255,255,255,0.5);font-size:0.8rem;margin-bottom:10px;">
+      Klik dua keping untuk menukarnya 🔄
+    </div>
+    <div class="btn-row">
+      <button class="btn-outline btn-sm" onclick="shufflePuzzle()">🔀 Acak Ulang</button>
+      <button class="btn-outline btn-sm" onclick="showHint()">💡 Petunjuk</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PUZZLE COMPLETE OVERLAY ===== -->
+<div class="puzzle-complete-overlay" id="puzzle-complete-overlay">
+  <div class="puzzle-complete-box">
+    <div style="font-size:4rem;">🎊</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:2rem;margin:8px 0;">Selesai!</div>
+    <canvas id="puzzle-done-canvas" width="200" height="200" style="border-radius:12px;margin:10px auto;display:block;"></canvas>
+    <div style="color:rgba(255,255,255,0.6);font-size:0.9rem;margin-bottom:4px;">Waktu</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:2rem;color:var(--yellow);" id="pz-done-time">0:00</div>
+    <div style="color:rgba(255,255,255,0.6);font-size:0.9rem;margin-bottom:4px;margin-top:8px;">Langkah</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--blue);" id="pz-done-moves">0</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.2rem;background:linear-gradient(135deg,var(--purple),var(--pink));border-radius:50px;padding:8px 24px;margin:12px auto;display:inline-block;" id="pz-done-stars">⭐⭐⭐</div>
+    <div class="btn-row">
+      <button class="btn" onclick="closePuzzleComplete();showPuzzleSelect()">🧩 Pilih Lain</button>
+      <button class="btn-outline" onclick="closePuzzleComplete();replayPuzzle()">🔄 Main Lagi</button>
+    </div>
+  </div>
 </div>
 
 <!-- ===== GAME SCREEN ===== -->
@@ -1177,6 +1323,633 @@ function showNotif(msg,good){
   n.textContent=msg;
   document.body.appendChild(n);
   setTimeout(()=>{n.style.opacity='0';n.style.transition='opacity 0.3s';setTimeout(()=>n.remove(),300);},1500);
+}
+
+
+// ===========================
+// ===== PUZZLE SYSTEM =====
+// ===========================
+
+// 10 Gambar puzzle - digambar dengan Canvas API (tidak butuh internet)
+const PUZZLE_IMAGES = [
+  {
+    name: 'Matahari', stars: 0,
+    draw: (ctx, w, h) => {
+      // Sky gradient
+      const sky = ctx.createLinearGradient(0,0,0,h);
+      sky.addColorStop(0,'#1a6bb5'); sky.addColorStop(1,'#5bc4f5');
+      ctx.fillStyle = sky; ctx.fillRect(0,0,w,h);
+      // Ground
+      ctx.fillStyle='#5db85d'; ctx.fillRect(0,h*0.75,w,h*0.25);
+      // Sun
+      ctx.fillStyle='#FFD93D';
+      ctx.beginPath(); ctx.arc(w*0.5,h*0.35,w*0.2,0,Math.PI*2); ctx.fill();
+      // Rays
+      ctx.strokeStyle='#FFD93D'; ctx.lineWidth=w*0.04;
+      for(let i=0;i<8;i++){
+        const a=i*Math.PI/4;
+        ctx.beginPath();
+        ctx.moveTo(w*0.5+Math.cos(a)*w*0.24, h*0.35+Math.sin(a)*w*0.24);
+        ctx.lineTo(w*0.5+Math.cos(a)*w*0.32, h*0.35+Math.sin(a)*w*0.32);
+        ctx.stroke();
+      }
+      // Clouds
+      ctx.fillStyle='white';
+      [[0.2,0.18],[0.7,0.12]].forEach(([cx,cy])=>{
+        ctx.beginPath(); ctx.arc(w*cx,h*cy,w*0.1,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(w*(cx+0.08),h*(cy-0.02),w*0.07,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(w*(cx-0.07),h*(cy+0.01),w*0.07,0,Math.PI*2); ctx.fill();
+      });
+    }
+  },
+  {
+    name: 'Laut', stars: 0,
+    draw: (ctx, w, h) => {
+      // Sky
+      const sky = ctx.createLinearGradient(0,0,0,h*0.5);
+      sky.addColorStop(0,'#0d47a1'); sky.addColorStop(1,'#42a5f5');
+      ctx.fillStyle=sky; ctx.fillRect(0,0,w,h*0.5);
+      // Sea
+      const sea = ctx.createLinearGradient(0,h*0.5,0,h);
+      sea.addColorStop(0,'#1565c0'); sea.addColorStop(1,'#0d47a1');
+      ctx.fillStyle=sea; ctx.fillRect(0,h*0.5,w,h*0.5);
+      // Waves
+      ctx.strokeStyle='rgba(255,255,255,0.5)'; ctx.lineWidth=3;
+      for(let y=0;y<3;y++){
+        ctx.beginPath();
+        for(let x=0;x<=w;x+=20){
+          ctx.lineTo(x, h*(0.52+y*0.12)+Math.sin(x*0.1)*6);
+        }
+        ctx.stroke();
+      }
+      // Sun reflection
+      ctx.fillStyle='rgba(255,220,50,0.3)';
+      ctx.beginPath(); ctx.ellipse(w*0.5,h*0.5,w*0.06,h*0.35,0,0,Math.PI*2); ctx.fill();
+      // Sun
+      ctx.fillStyle='#FFD93D';
+      ctx.beginPath(); ctx.arc(w*0.5,h*0.15,w*0.12,0,Math.PI*2); ctx.fill();
+      // Boat
+      ctx.fillStyle='#e53935';
+      ctx.beginPath(); ctx.moveTo(w*0.3,h*0.48); ctx.lineTo(w*0.7,h*0.48); ctx.lineTo(w*0.62,h*0.55); ctx.lineTo(w*0.38,h*0.55); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='white'; ctx.strokeStyle='#888'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(w*0.5,h*0.3); ctx.lineTo(w*0.5,h*0.48); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w*0.5,h*0.3); ctx.lineTo(w*0.65,h*0.44); ctx.lineTo(w*0.5,h*0.44); ctx.closePath(); ctx.fill();
+    }
+  },
+  {
+    name: 'Hutan', stars: 0,
+    draw: (ctx, w, h) => {
+      // Sky
+      ctx.fillStyle='#87CEEB'; ctx.fillRect(0,0,w,h);
+      // Ground
+      ctx.fillStyle='#4a7c2f'; ctx.fillRect(0,h*0.7,w,h*0.3);
+      // Trees
+      const drawTree = (x,y,s) => {
+        ctx.fillStyle='#5d4037';
+        ctx.fillRect(x-s*0.07,y,s*0.14,s*0.4);
+        ctx.fillStyle='#2e7d32';
+        ctx.beginPath(); ctx.moveTo(x,y-s*0.6); ctx.lineTo(x-s*0.35,y+s*0.2); ctx.lineTo(x+s*0.35,y+s*0.2); ctx.closePath(); ctx.fill();
+        ctx.fillStyle='#388e3c';
+        ctx.beginPath(); ctx.moveTo(x,y-s*0.85); ctx.lineTo(x-s*0.28,y-s*0.1); ctx.lineTo(x+s*0.28,y-s*0.1); ctx.closePath(); ctx.fill();
+        ctx.fillStyle='#43a047';
+        ctx.beginPath(); ctx.moveTo(x,y-s*1.05); ctx.lineTo(x-s*0.2,y-s*0.4); ctx.lineTo(x+s*0.2,y-s*0.4); ctx.closePath(); ctx.fill();
+      };
+      drawTree(w*0.15,h*0.7,w*0.3);
+      drawTree(w*0.5,h*0.65,w*0.38);
+      drawTree(w*0.82,h*0.7,w*0.28);
+      drawTree(w*0.35,h*0.73,w*0.22);
+      // Flowers
+      ['#FF6B9D','#FFD93D','#4ECDC4'].forEach((c,i)=>{
+        ctx.fillStyle=c;
+        ctx.beginPath(); ctx.arc(w*(0.2+i*0.28),h*0.85,w*0.04,0,Math.PI*2); ctx.fill();
+      });
+    }
+  },
+  {
+    name: 'Gunung', stars: 0,
+    draw: (ctx, w, h) => {
+      // Sky gradient
+      const sky = ctx.createLinearGradient(0,0,0,h);
+      sky.addColorStop(0,'#0d47a1'); sky.addColorStop(0.6,'#42a5f5'); sky.addColorStop(1,'#e3f2fd');
+      ctx.fillStyle=sky; ctx.fillRect(0,0,w,h);
+      // Far mountains
+      ctx.fillStyle='#6a8caf';
+      ctx.beginPath(); ctx.moveTo(0,h*0.65); ctx.lineTo(w*0.25,h*0.3); ctx.lineTo(w*0.5,h*0.6); ctx.lineTo(w,h*0.4); ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath(); ctx.fill();
+      // Main mountain
+      ctx.fillStyle='#4e6d8c';
+      ctx.beginPath(); ctx.moveTo(0,h); ctx.lineTo(w*0.15,h*0.7); ctx.lineTo(w*0.5,h*0.1); ctx.lineTo(w*0.85,h*0.7); ctx.lineTo(w,h); ctx.closePath(); ctx.fill();
+      // Snow cap
+      ctx.fillStyle='white';
+      ctx.beginPath(); ctx.moveTo(w*0.5,h*0.1); ctx.lineTo(w*0.38,h*0.35); ctx.lineTo(w*0.62,h*0.35); ctx.closePath(); ctx.fill();
+      // Ground
+      ctx.fillStyle='#4a7c2f'; ctx.fillRect(0,h*0.82,w,h*0.18);
+      // River
+      ctx.strokeStyle='#42a5f5'; ctx.lineWidth=8;
+      ctx.beginPath(); ctx.moveTo(w*0.45,h*0.82); ctx.quadraticCurveTo(w*0.55,h*0.9,w*0.5,h); ctx.stroke();
+    }
+  },
+  {
+    name: 'Kebun Binatang', stars: 0,
+    draw: (ctx, w, h) => {
+      ctx.fillStyle='#a5d6a7'; ctx.fillRect(0,0,w,h);
+      // Path
+      ctx.fillStyle='#d7ccc8';
+      ctx.beginPath(); ctx.ellipse(w*0.5,h*0.7,w*0.45,h*0.18,0,0,Math.PI*2); ctx.fill();
+      // Lion
+      ctx.fillStyle='#FFA726';
+      ctx.beginPath(); ctx.arc(w*0.25,h*0.45,w*0.14,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#e65100';
+      ctx.beginPath(); ctx.arc(w*0.25,h*0.45,w*0.18,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#FFA726';
+      ctx.beginPath(); ctx.arc(w*0.25,h*0.43,w*0.12,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#333'; ctx.beginPath(); ctx.arc(w*0.22,h*0.41,3,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(w*0.28,h*0.41,3,0,Math.PI*2); ctx.fill();
+      // Elephant
+      ctx.fillStyle='#9e9e9e';
+      ctx.beginPath(); ctx.ellipse(w*0.72,h*0.48,w*0.15,h*0.13,0,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(w*0.72,h*0.38,w*0.1,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#9e9e9e'; ctx.lineWidth=8;
+      ctx.beginPath(); ctx.moveTo(w*0.72,h*0.45); ctx.quadraticCurveTo(w*0.65,h*0.55,w*0.6,h*0.6); ctx.stroke();
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(w*0.69,h*0.36,3,0,Math.PI*2); ctx.fill();
+      // Trees
+      [0.1,0.88].forEach(x=>{
+        ctx.fillStyle='#5d4037'; ctx.fillRect(w*x-4,h*0.55,8,h*0.25);
+        ctx.fillStyle='#388e3c'; ctx.beginPath(); ctx.arc(w*x,h*0.52,w*0.07,0,Math.PI*2); ctx.fill();
+      });
+      // Text
+      ctx.fillStyle='#1a237e'; ctx.font=`bold ${w*0.07}px Arial`;
+      ctx.textAlign='center'; ctx.fillText('KEBUN BINATANG',w*0.5,h*0.94);
+    }
+  },
+  {
+    name: 'Luar Angkasa', stars: 0,
+    draw: (ctx, w, h) => {
+      // Space background
+      ctx.fillStyle='#050520'; ctx.fillRect(0,0,w,h);
+      // Stars
+      ctx.fillStyle='white';
+      for(let i=0;i<80;i++){
+        const x=Math.sin(i*137.508)*w/2+w/2;
+        const y=Math.cos(i*137.508)*h/2+h/2;
+        const r=Math.random()*2+0.5;
+        ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+      }
+      // Planet Earth
+      ctx.fillStyle='#1565c0';
+      ctx.beginPath(); ctx.arc(w*0.3,h*0.65,w*0.2,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#2e7d32';
+      ctx.beginPath(); ctx.ellipse(w*0.25,h*0.6,w*0.08,w*0.06,-0.5,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(w*0.36,h*0.7,w*0.06,w*0.05,0.3,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(w*0.3,h*0.65,w*0.22,0,Math.PI*2); ctx.stroke();
+      // Saturn
+      ctx.fillStyle='#f5c87a';
+      ctx.beginPath(); ctx.arc(w*0.72,h*0.28,w*0.12,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#c9a84c'; ctx.lineWidth=5;
+      ctx.beginPath(); ctx.ellipse(w*0.72,h*0.28,w*0.22,w*0.05,0,0,Math.PI*2); ctx.stroke();
+      // Rocket
+      ctx.fillStyle='#e0e0e0';
+      ctx.beginPath(); ctx.moveTo(w*0.6,h*0.1); ctx.lineTo(w*0.56,h*0.35); ctx.lineTo(w*0.64,h*0.35); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#ef5350'; ctx.beginPath(); ctx.arc(w*0.6,h*0.1,w*0.04,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#FF6B35';
+      ctx.beginPath(); ctx.moveTo(w*0.57,h*0.35); ctx.lineTo(w*0.54,h*0.44); ctx.lineTo(w*0.63,h*0.35); ctx.closePath(); ctx.fill();
+    }
+  },
+  {
+    name: 'Kota', stars: 0,
+    draw: (ctx, w, h) => {
+      // Sky
+      const sky = ctx.createLinearGradient(0,0,0,h*0.6);
+      sky.addColorStop(0,'#1a237e'); sky.addColorStop(1,'#3949ab');
+      ctx.fillStyle=sky; ctx.fillRect(0,0,w,h*0.6);
+      // Moon
+      ctx.fillStyle='#fff9c4'; ctx.beginPath(); ctx.arc(w*0.8,h*0.15,w*0.08,0,Math.PI*2); ctx.fill();
+      // Stars
+      ctx.fillStyle='white';
+      [[0.1,0.08],[0.3,0.05],[0.5,0.12],[0.15,0.2],[0.65,0.07]].forEach(([x,y])=>{
+        ctx.beginPath(); ctx.arc(w*x,h*y,2,0,Math.PI*2); ctx.fill();
+      });
+      // Road
+      ctx.fillStyle='#424242'; ctx.fillRect(0,h*0.82,w,h*0.18);
+      ctx.strokeStyle='#FFD93D'; ctx.lineWidth=3; ctx.setLineDash([20,15]);
+      ctx.beginPath(); ctx.moveTo(0,h*0.91); ctx.lineTo(w,h*0.91); ctx.stroke();
+      ctx.setLineDash([]);
+      // Buildings
+      const buildings = [
+        {x:0.02,w:0.18,h:0.55,c:'#37474f'},{x:0.22,w:0.14,h:0.42,c:'#455a64'},
+        {x:0.38,w:0.22,h:0.65,c:'#263238'},{x:0.62,w:0.16,h:0.48,c:'#37474f'},
+        {x:0.8,w:0.18,h:0.38,c:'#455a64'},
+      ];
+      buildings.forEach(b=>{
+        ctx.fillStyle=b.c;
+        const bh=h*b.h; const by=h*0.82-bh;
+        ctx.fillRect(w*b.x,by,w*b.w,bh);
+        // Windows
+        ctx.fillStyle='#FFD93D';
+        for(let wy=by+8;wy<h*0.8;wy+=18){
+          for(let wx=w*b.x+6;wx<w*(b.x+b.w)-10;wx+=14){
+            if(Math.random()>0.3) { ctx.fillRect(wx,wy,8,10); }
+          }
+        }
+      });
+    }
+  },
+  {
+    name: 'Pelangi', stars: 0,
+    draw: (ctx, w, h) => {
+      // Sky after rain
+      ctx.fillStyle='#b3e5fc'; ctx.fillRect(0,0,w,h);
+      // Rainbow
+      const colors=['#FF0000','#FF7F00','#FFFF00','#00FF00','#0000FF','#8B00FF'];
+      colors.forEach((c,i)=>{
+        ctx.strokeStyle=c; ctx.lineWidth=w*0.045;
+        ctx.beginPath(); ctx.arc(w*0.5,h*1.0,w*(0.35+i*0.07),Math.PI,0); ctx.stroke();
+      });
+      // Ground
+      ctx.fillStyle='#66bb6a'; ctx.fillRect(0,h*0.78,w,h*0.22);
+      // Puddle
+      ctx.fillStyle='rgba(100,180,255,0.5)';
+      ctx.beginPath(); ctx.ellipse(w*0.5,h*0.88,w*0.3,h*0.06,0,0,Math.PI*2); ctx.fill();
+      // Reflection
+      colors.forEach((c,i)=>{
+        ctx.strokeStyle=c+'60'; ctx.lineWidth=4;
+        ctx.beginPath(); ctx.arc(w*0.5,h*0.82,w*(0.1+i*0.05),0,Math.PI); ctx.stroke();
+      });
+      // Flowers
+      ['#FF6B9D','#FF6B35','#FFD93D','#6BCB77'].forEach((c,i)=>{
+        ctx.fillStyle=c;
+        ctx.beginPath(); ctx.arc(w*(0.1+i*0.25),h*0.9,w*0.04,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#388e3c'; ctx.fillRect(w*(0.1+i*0.25)-2,h*0.9,4,h*0.08);
+      });
+    }
+  },
+  {
+    name: 'Pertanian', stars: 0,
+    draw: (ctx, w, h) => {
+      // Sky
+      ctx.fillStyle='#87CEEB'; ctx.fillRect(0,0,w,h*0.45);
+      // Sun
+      ctx.fillStyle='#FFD93D'; ctx.beginPath(); ctx.arc(w*0.85,h*0.12,w*0.1,0,Math.PI*2); ctx.fill();
+      // Fields
+      const fg = ctx.createLinearGradient(0,h*0.45,0,h);
+      fg.addColorStop(0,'#8bc34a'); fg.addColorStop(1,'#558b2f');
+      ctx.fillStyle=fg; ctx.fillRect(0,h*0.45,w,h*0.55);
+      // Crop rows
+      ctx.strokeStyle='#33691e'; ctx.lineWidth=3;
+      for(let i=0;i<6;i++){
+        ctx.beginPath(); ctx.moveTo(0,h*(0.55+i*0.07)); ctx.lineTo(w,h*(0.55+i*0.07)); ctx.stroke();
+      }
+      // Barn
+      ctx.fillStyle='#d32f2f'; ctx.fillRect(w*0.08,h*0.3,w*0.28,h*0.2);
+      ctx.fillStyle='#b71c1c';
+      ctx.beginPath(); ctx.moveTo(w*0.05,h*0.3); ctx.lineTo(w*0.22,h*0.15); ctx.lineTo(w*0.39,h*0.3); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#5d4037'; ctx.fillRect(w*0.17,h*0.38,w*0.08,w*0.12);
+      // Windmill
+      ctx.fillStyle='#795548'; ctx.fillRect(w*0.72,h*0.25,w*0.04,h*0.22);
+      ctx.fillStyle='#bdbdbd';
+      [[0,-1],[1,0],[0,1],[-1,0]].forEach(([dx,dy])=>{
+        ctx.beginPath();
+        ctx.moveTo(w*0.74,h*0.28);
+        ctx.lineTo(w*(0.74+dx*0.1),h*(0.28+dy*0.1));
+        ctx.lineTo(w*(0.74+dx*0.12+dy*0.04),h*(0.28+dy*0.12-dx*0.04));
+        ctx.closePath(); ctx.fill();
+      });
+      // Cow
+      ctx.fillStyle='white'; ctx.beginPath(); ctx.ellipse(w*0.55,h*0.72,w*0.1,h*0.07,0,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(w*0.63,h*0.69,w*0.05,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#333'; ctx.beginPath(); ctx.arc(w*0.64,h*0.68,2,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='#795548'; ctx.lineWidth=3;
+      [[0.5,0.79],[0.55,0.79],[0.6,0.79],[0.64,0.79]].forEach(([x,y])=>{
+        ctx.beginPath(); ctx.moveTo(w*x,h*0.74); ctx.lineTo(w*x,h*y); ctx.stroke();
+      });
+    }
+  },
+  {
+    name: 'Bawah Laut', stars: 0,
+    draw: (ctx, w, h) => {
+      // Ocean gradient
+      const ocean = ctx.createLinearGradient(0,0,0,h);
+      ocean.addColorStop(0,'#1565c0'); ocean.addColorStop(1,'#0d2137');
+      ctx.fillStyle=ocean; ctx.fillRect(0,0,w,h);
+      // Light rays
+      ctx.strokeStyle='rgba(100,180,255,0.15)'; ctx.lineWidth=20;
+      for(let i=0;i<5;i++){
+        ctx.beginPath(); ctx.moveTo(w*(0.1+i*0.2),0); ctx.lineTo(w*(0.05+i*0.22),h); ctx.stroke();
+      }
+      // Sand
+      ctx.fillStyle='#c8a96e'; ctx.fillRect(0,h*0.8,w,h*0.2);
+      // Coral
+      const drawCoral = (x,y,c) => {
+        ctx.strokeStyle=c; ctx.lineWidth=6;
+        ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x,y-40);
+        ctx.moveTo(x,y-20); ctx.lineTo(x-15,y-38);
+        ctx.moveTo(x,y-20); ctx.lineTo(x+15,y-38);
+        ctx.stroke();
+        ctx.fillStyle=c; ctx.beginPath(); ctx.arc(x,y-40,6,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x-15,y-38,5,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x+15,y-38,5,0,Math.PI*2); ctx.fill();
+      };
+      drawCoral(w*0.12,h*0.82,'#ef5350');
+      drawCoral(w*0.85,h*0.82,'#ab47bc');
+      drawCoral(w*0.5,h*0.85,'#FF6B9D');
+      // Fish
+      const drawFish = (x,y,c,s) => {
+        ctx.fillStyle=c;
+        ctx.beginPath(); ctx.ellipse(x,y,s*1.5,s,0,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(x-s*1.5,y); ctx.lineTo(x-s*2.2,y-s*0.8); ctx.lineTo(x-s*2.2,y+s*0.8); ctx.closePath(); ctx.fill();
+        ctx.fillStyle='white'; ctx.beginPath(); ctx.arc(x+s*0.8,y-s*0.2,s*0.3,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#333'; ctx.beginPath(); ctx.arc(x+s*0.9,y-s*0.2,s*0.15,0,Math.PI*2); ctx.fill();
+      };
+      drawFish(w*0.35,h*0.25,'#FF6B35',12);
+      drawFish(w*0.65,h*0.4,'#FFD93D',10);
+      drawFish(w*0.2,h*0.55,'#4ECDC4',9);
+      drawFish(w*0.75,h*0.6,'#FF6B9D',11);
+      // Bubbles
+      ctx.strokeStyle='rgba(255,255,255,0.4)'; ctx.lineWidth=2;
+      [[0.35,0.15],[0.65,0.3],[0.2,0.45],[0.75,0.5]].forEach(([x,y])=>{
+        ctx.beginPath(); ctx.arc(w*x,h*y,5,0,Math.PI*2); ctx.stroke();
+        ctx.beginPath(); ctx.arc(w*x+8,h*y-12,3,0,Math.PI*2); ctx.stroke();
+      });
+    }
+  }
+];
+
+// ===== PUZZLE STATE =====
+let pz = {
+  imageIdx: 0,
+  tiles: [],        // array of {correctPos, currentPos}
+  selected: -1,
+  moves: 0,
+  startTime: 0,
+  timerInterval: null,
+  gridSize: 4,
+  tileSize: 80,     // 320/4
+  canvasSize: 320
+};
+
+function showPuzzleSelect() {
+  clearTimer();
+  const grid = document.getElementById('puzzle-select-grid');
+  grid.innerHTML = '';
+
+  PUZZLE_IMAGES.forEach((img, idx) => {
+    const card = document.createElement('div');
+    card.className = 'puzzle-thumb';
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 80; canvas.height = 80;
+    const ctx = canvas.getContext('2d');
+    img.draw(ctx, 80, 80);
+
+    const stars = img.stars > 0
+      ? '⭐'.repeat(img.stars)
+      : '<span style="color:rgba(255,255,255,0.3)">Belum dimainkan</span>';
+
+    card.appendChild(canvas);
+    card.innerHTML += `<div class="pt-name">${img.name}</div><div class="pt-stars">${stars}</div>`;
+    card.onclick = () => startPuzzle(idx);
+    grid.appendChild(card);
+  });
+
+  showScreen('puzzle-select-screen');
+}
+
+function startPuzzle(idx) {
+  pz.imageIdx = idx;
+  pz.gridSize = 4;
+  pz.tileSize = 80;
+  pz.canvasSize = 320;
+  pz.moves = 0;
+  pz.selected = -1;
+
+  // Draw full image on preview
+  const prevCtx = document.getElementById('preview-canvas').getContext('2d');
+  PUZZLE_IMAGES[idx].draw(prevCtx, 120, 120);
+
+  // Build tiles (0..15)
+  pz.tiles = Array.from({length: 16}, (_,i) => i);
+  shufflePuzzle();
+
+  // Update UI
+  document.getElementById('pz-player').textContent = currentPlayer ? `${currentPlayer.avatar} ${currentPlayer.name}` : 'Pemain';
+  document.getElementById('pz-moves').textContent = '0';
+
+  // Start timer
+  pz.startTime = Date.now();
+  if(pz.timerInterval) clearInterval(pz.timerInterval);
+  pz.timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - pz.startTime) / 1000);
+    const m = Math.floor(elapsed/60);
+    const s = elapsed%60;
+    document.getElementById('pz-timer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  }, 1000);
+
+  setupPuzzleCanvas();
+  showScreen('puzzle-screen');
+  drawPuzzle();
+}
+
+function shufflePuzzle() {
+  // Fisher-Yates shuffle
+  for(let i=pz.tiles.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [pz.tiles[i], pz.tiles[j]] = [pz.tiles[j], pz.tiles[i]];
+  }
+  pz.selected = -1;
+  pz.moves = 0;
+  document.getElementById('pz-moves').textContent = '0';
+  pz.startTime = Date.now();
+  drawPuzzle();
+}
+
+function setupPuzzleCanvas() {
+  const canvas = document.getElementById('puzzle-canvas');
+  canvas.width = pz.canvasSize;
+  canvas.height = pz.canvasSize;
+
+  // Remove old listeners
+  canvas.replaceWith(canvas.cloneNode(true));
+  const c = document.getElementById('puzzle-canvas');
+
+  // Click handler
+  c.addEventListener('click', (e) => {
+    const rect = c.getBoundingClientRect();
+    const scaleX = c.width / rect.width;
+    const scaleY = c.height / rect.height;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+    const col = Math.floor(x / pz.tileSize);
+    const row = Math.floor(y / pz.tileSize);
+    const tileIdx = row * pz.gridSize + col;
+    handleTileClick(tileIdx);
+  });
+
+  // Touch handler
+  c.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    const rect = c.getBoundingClientRect();
+    const scaleX = c.width / rect.width;
+    const scaleY = c.height / rect.height;
+    const x = (touch.clientX - rect.left) * scaleX;
+    const y = (touch.clientY - rect.top) * scaleY;
+    const col = Math.floor(x / pz.tileSize);
+    const row = Math.floor(y / pz.tileSize);
+    const tileIdx = row * pz.gridSize + col;
+    handleTileClick(tileIdx);
+  }, {passive: false});
+}
+
+function handleTileClick(tileIdx) {
+  if(tileIdx < 0 || tileIdx >= 16) return;
+
+  if(pz.selected === -1) {
+    pz.selected = tileIdx;
+    drawPuzzle();
+  } else if(pz.selected === tileIdx) {
+    pz.selected = -1;
+    drawPuzzle();
+  } else {
+    // Swap
+    [pz.tiles[pz.selected], pz.tiles[tileIdx]] = [pz.tiles[tileIdx], pz.tiles[pz.selected]];
+    pz.moves++;
+    document.getElementById('pz-moves').textContent = pz.moves;
+    pz.selected = -1;
+    drawPuzzle();
+
+    // Check win
+    if(checkPuzzleSolved()) {
+      setTimeout(() => showPuzzleComplete(), 500);
+    }
+  }
+}
+
+function drawPuzzle() {
+  const canvas = document.getElementById('puzzle-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const ts = pz.tileSize;
+  const g = pz.gridSize;
+
+  // Draw full image onto offscreen canvas
+  const offscreen = document.createElement('canvas');
+  offscreen.width = pz.canvasSize;
+  offscreen.height = pz.canvasSize;
+  const offCtx = offscreen.getContext('2d');
+  PUZZLE_IMAGES[pz.imageIdx].draw(offCtx, pz.canvasSize, pz.canvasSize);
+
+  ctx.clearRect(0,0,pz.canvasSize,pz.canvasSize);
+
+  pz.tiles.forEach((correctPos, currentPos) => {
+    const destCol = currentPos % g;
+    const destRow = Math.floor(currentPos / g);
+    const srcCol  = correctPos % g;
+    const srcRow  = Math.floor(correctPos / g);
+
+    const dx = destCol * ts;
+    const dy = destRow * ts;
+
+    // Draw tile
+    ctx.drawImage(offscreen, srcCol*ts, srcRow*ts, ts, ts, dx, dy, ts, ts);
+
+    // Highlight selected
+    if(currentPos === pz.selected) {
+      ctx.fillStyle = 'rgba(255,217,61,0.4)';
+      ctx.fillRect(dx, dy, ts, ts);
+      ctx.strokeStyle = '#FFD93D';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(dx+2, dy+2, ts-4, ts-4);
+    }
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(dx, dy, ts, ts);
+
+    // Tile number (small)
+    if(currentPos !== pz.selected) {
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = 'bold 11px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText(correctPos+1, dx+4, dy+14);
+    }
+  });
+}
+
+function checkPuzzleSolved() {
+  return pz.tiles.every((val, idx) => val === idx);
+}
+
+function showHint() {
+  // Flash the correct position for selected tile
+  if(pz.selected !== -1) {
+    const correctPos = pz.tiles[pz.selected];
+    showNotif(`Keping ini harusnya di posisi ${correctPos+1} 💡`, true);
+  } else {
+    // Show how many are in correct place
+    const correct = pz.tiles.filter((val,idx) => val===idx).length;
+    showNotif(`${correct} dari 16 keping sudah benar! 💡`, true);
+  }
+}
+
+function showPuzzleComplete() {
+  if(pz.timerInterval) clearInterval(pz.timerInterval);
+
+  const elapsed = Math.floor((Date.now() - pz.startTime) / 1000);
+  const m = Math.floor(elapsed/60);
+  const s = elapsed%60;
+  const timeStr = `${m}:${s.toString().padStart(2,'0')}`;
+
+  // Stars rating
+  let stars = '⭐';
+  if(pz.moves <= 30) stars = '⭐⭐⭐';
+  else if(pz.moves <= 60) stars = '⭐⭐';
+
+  // Save star record
+  PUZZLE_IMAGES[pz.imageIdx].stars = stars.length/2;
+
+  // Draw completed image on done canvas
+  const doneCtx = document.getElementById('puzzle-done-canvas').getContext('2d');
+  PUZZLE_IMAGES[pz.imageIdx].draw(doneCtx, 200, 200);
+
+  document.getElementById('pz-done-time').textContent = timeStr;
+  document.getElementById('pz-done-moves').textContent = pz.moves + ' langkah';
+  document.getElementById('pz-done-stars').textContent = stars;
+
+  // Award score
+  if(currentPlayer) {
+    const pts = Math.max(50, 200 - pz.moves);
+    currentPlayer.score += pts;
+    currentPlayer.credits += Math.floor(pts/10);
+    savePlayer(currentPlayer);
+    updateHomeDisplay();
+    showNotif(`+${pts} poin! 🎊`, true);
+  }
+
+  spawnConfetti();
+  document.getElementById('puzzle-complete-overlay').classList.add('active');
+
+  // Update thumbnail stars
+  showPuzzleSelectRefresh();
+}
+
+function showPuzzleSelectRefresh() {
+  // Refresh star display on puzzle select (called after completion)
+  const thumbs = document.querySelectorAll('.puzzle-thumb');
+  thumbs.forEach((th, idx) => {
+    const starsEl = th.querySelector('.pt-stars');
+    if(starsEl && PUZZLE_IMAGES[idx].stars > 0) {
+      starsEl.innerHTML = '⭐'.repeat(PUZZLE_IMAGES[idx].stars);
+    }
+  });
+}
+
+function closePuzzleComplete() {
+  document.getElementById('puzzle-complete-overlay').classList.remove('active');
+}
+
+function replayPuzzle() {
+  startPuzzle(pz.imageIdx);
 }
 
 // ===== INIT =====
