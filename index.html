@@ -627,57 +627,154 @@
 </div>
 
 <script>
-// ===== QUESTIONS =====
+// ===== QUESTIONS (100+ soal) =====
 const QUESTIONS = {
   math: [
+    // Level 1 - Penjumlahan & Pengurangan dasar
     {q:"Berapa 7 + 8?",opts:["14","15","13","16"],ans:"15",lvl:1},
     {q:"Berapa 15 - 7?",opts:["8","7","9","6"],ans:"8",lvl:1},
-    {q:"Berapa 4 × 3?",opts:["10","11","12","13"],ans:"12",lvl:1},
-    {q:"Berapa 20 ÷ 4?",opts:["4","5","6","7"],ans:"5",lvl:1},
     {q:"Berapa 9 + 6?",opts:["14","15","16","13"],ans:"15",lvl:1},
     {q:"Berapa 18 - 9?",opts:["8","9","10","7"],ans:"9",lvl:1},
+    {q:"Berapa 5 + 7?",opts:["10","11","12","13"],ans:"12",lvl:1},
+    {q:"Berapa 14 - 6?",opts:["6","7","8","9"],ans:"8",lvl:1},
+    {q:"Berapa 3 + 9?",opts:["10","11","12","13"],ans:"12",lvl:1},
+    {q:"Berapa 16 - 8?",opts:["6","7","8","9"],ans:"8",lvl:1},
+    {q:"Berapa 6 + 7?",opts:["11","12","13","14"],ans:"13",lvl:1},
+    {q:"Berapa 20 - 5?",opts:["13","14","15","16"],ans:"15",lvl:1},
+    // Level 1 - Perkalian & Pembagian dasar
+    {q:"Berapa 4 × 3?",opts:["10","11","12","13"],ans:"12",lvl:1},
+    {q:"Berapa 20 ÷ 4?",opts:["4","5","6","7"],ans:"5",lvl:1},
     {q:"Berapa 6 × 6?",opts:["34","35","36","37"],ans:"36",lvl:1},
     {q:"Berapa 30 ÷ 5?",opts:["5","6","7","8"],ans:"6",lvl:1},
+    {q:"Berapa 5 × 5?",opts:["20","25","30","35"],ans:"25",lvl:1},
+    {q:"Berapa 24 ÷ 4?",opts:["4","5","6","7"],ans:"6",lvl:1},
+    {q:"Berapa 3 × 7?",opts:["18","19","20","21"],ans:"21",lvl:1},
+    {q:"Berapa 18 ÷ 3?",opts:["4","5","6","7"],ans:"6",lvl:1},
+    {q:"Berapa 8 × 2?",opts:["14","15","16","17"],ans:"16",lvl:1},
+    {q:"Berapa 45 ÷ 9?",opts:["4","5","6","7"],ans:"5",lvl:1},
+    // Level 2 - Menengah
     {q:"Berapa 25 + 37?",opts:["60","61","62","63"],ans:"62",lvl:2},
     {q:"Berapa 100 - 45?",opts:["55","56","54","53"],ans:"55",lvl:2},
     {q:"Berapa 7 × 8?",opts:["54","55","56","57"],ans:"56",lvl:2},
     {q:"Berapa 72 ÷ 9?",opts:["7","8","9","6"],ans:"8",lvl:2},
     {q:"Berapa 13 × 4?",opts:["50","51","52","53"],ans:"52",lvl:2},
     {q:"Berapa ¼ dari 40?",opts:["8","10","12","15"],ans:"10",lvl:2},
+    {q:"Berapa 48 + 36?",opts:["82","83","84","85"],ans:"84",lvl:2},
+    {q:"Berapa 120 - 55?",opts:["63","64","65","66"],ans:"65",lvl:2},
+    {q:"Berapa 9 × 9?",opts:["79","80","81","82"],ans:"81",lvl:2},
+    {q:"Berapa 56 ÷ 7?",opts:["6","7","8","9"],ans:"8",lvl:2},
+    {q:"Berapa ½ dari 96?",opts:["46","47","48","49"],ans:"48",lvl:2},
+    {q:"Berapa 11 × 7?",opts:["75","76","77","78"],ans:"77",lvl:2},
+    {q:"Berapa 63 ÷ 7?",opts:["7","8","9","10"],ans:"9",lvl:2},
+    {q:"Berapa 75 + 18?",opts:["91","92","93","94"],ans:"93",lvl:2},
+    {q:"Berapa 200 - 85?",opts:["113","114","115","116"],ans:"115",lvl:2},
+    // Level 3 - Sulit
     {q:"Berapa 15 × 12?",opts:["160","170","180","190"],ans:"180",lvl:3},
     {q:"Berapa 144 ÷ 12?",opts:["11","12","13","14"],ans:"12",lvl:3},
     {q:"Berapa 25% dari 200?",opts:["40","45","50","55"],ans:"50",lvl:3},
     {q:"Berapa 333 + 444?",opts:["767","777","787","797"],ans:"777",lvl:3},
+    {q:"Berapa 17 × 6?",opts:["100","102","104","106"],ans:"102",lvl:3},
+    {q:"Berapa 256 ÷ 8?",opts:["30","31","32","33"],ans:"32",lvl:3},
+    {q:"Berapa 75% dari 120?",opts:["85","90","95","100"],ans:"90",lvl:3},
+    {q:"Berapa 468 + 375?",opts:["841","842","843","844"],ans:"843",lvl:3},
+    {q:"Berapa 500 - 237?",opts:["261","262","263","264"],ans:"263",lvl:3},
+    {q:"Berapa 24 × 5?",opts:["110","115","120","125"],ans:"120",lvl:3},
+    {q:"Berapa FPB dari 12 dan 18?",opts:["3","4","6","9"],ans:"6",lvl:3},
+    {q:"Berapa KPK dari 4 dan 6?",opts:["8","10","12","14"],ans:"12",lvl:3},
   ],
   ipa: [
+    // Hewan
     {q:"Hewan apa yang bisa berubah warna?",opts:["Bunglon","Ular","Katak","Kadal"],ans:"Bunglon",lvl:1},
-    {q:"Proses tumbuhan membuat makanan disebut...",opts:["Respirasi","Fotosintesis","Transpirasi","Fermentasi"],ans:"Fotosintesis",lvl:1},
     {q:"Berapa jumlah kaki laba-laba?",opts:["4","6","8","10"],ans:"8",lvl:1},
-    {q:"Planet terbesar di tata surya adalah...",opts:["Saturnus","Mars","Bumi","Jupiter"],ans:"Jupiter",lvl:1},
+    {q:"Hewan yang berkembang biak dengan bertelur disebut...",opts:["Mamalia","Ovipar","Vivipar","Amfibi"],ans:"Ovipar",lvl:2},
+    {q:"Hewan pemakan daging disebut...",opts:["Herbivora","Karnivora","Omnivora","Insektivora"],ans:"Karnivora",lvl:1},
+    {q:"Hewan pemakan tumbuhan disebut...",opts:["Herbivora","Karnivora","Omnivora","Predator"],ans:"Herbivora",lvl:1},
+    {q:"Kupu-kupu mengalami metamorfosis. Urutannya yang benar adalah...",opts:["Telur-ulat-kupu-kupu-kepompong","Telur-kepompong-ulat-kupu-kupu","Telur-ulat-kepompong-kupu-kupu","Ulat-telur-kepompong-kupu-kupu"],ans:"Telur-ulat-kepompong-kupu-kupu",lvl:2},
+    {q:"Hewan yang bisa hidup di darat dan air disebut...",opts:["Reptil","Mamalia","Amfibi","Insekta"],ans:"Amfibi",lvl:2},
+    {q:"Berapa jumlah kaki serangga?",opts:["4","6","8","10"],ans:"6",lvl:1},
+    {q:"Hewan yang menyusui anaknya disebut...",opts:["Ovipar","Mamalia","Reptil","Amfibi"],ans:"Mamalia",lvl:1},
+    {q:"Hewan apa yang tidur di musim dingin?",opts:["Singa","Beruang","Gajah","Jerapah"],ans:"Beruang",lvl:2},
+    // Tumbuhan
+    {q:"Proses tumbuhan membuat makanan disebut...",opts:["Respirasi","Fotosintesis","Transpirasi","Fermentasi"],ans:"Fotosintesis",lvl:1},
+    {q:"Bagian tumbuhan yang menyerap air dari tanah adalah...",opts:["Batang","Daun","Akar","Bunga"],ans:"Akar",lvl:1},
+    {q:"Zat hijau daun yang membantu fotosintesis disebut...",opts:["Klorofil","Glukosa","Oksigen","Selulosa"],ans:"Klorofil",lvl:2},
+    {q:"Tumbuhan membutuhkan apa untuk fotosintesis?",opts:["Air dan gula","Sinar matahari dan CO2","Oksigen dan air","Tanah dan angin"],ans:"Sinar matahari dan CO2",lvl:2},
+    {q:"Bunga adalah bagian tumbuhan untuk...",opts:["Menyerap air","Membuat makanan","Berkembang biak","Bernapas"],ans:"Berkembang biak",lvl:2},
+    // Tubuh Manusia
     {q:"Organ tubuh yang memompa darah adalah...",opts:["Paru-paru","Hati","Jantung","Ginjal"],ans:"Jantung",lvl:1},
-    {q:"Hewan yang berkembang biak dengan bertelur disebut...",opts:["Mamalia","Ovipar","Vivipar","Reptil"],ans:"Ovipar",lvl:2},
     {q:"Gas yang kita hirup saat bernafas adalah...",opts:["CO2","Nitrogen","Oksigen","Helium"],ans:"Oksigen",lvl:1},
-    {q:"Planet paling dekat dengan Matahari adalah...",opts:["Venus","Merkurius","Bumi","Mars"],ans:"Merkurius",lvl:2},
-    {q:"Proses ulat berubah jadi kupu-kupu disebut...",opts:["Evolusi","Metamorfosis","Adaptasi","Migrasi"],ans:"Metamorfosis",lvl:2},
     {q:"Berapa jumlah gigi susu pada manusia?",opts:["18","20","22","24"],ans:"20",lvl:2},
-    {q:"Air mendidih pada suhu...",opts:["80°C","90°C","100°C","110°C"],ans:"100°C",lvl:1},
     {q:"Tulang terpanjang pada tubuh manusia adalah...",opts:["Tulang lengan","Femur (paha)","Tulang punggung","Tulang betis"],ans:"Femur (paha)",lvl:3},
+    {q:"Organ untuk menyaring darah adalah...",opts:["Jantung","Hati","Ginjal","Paru-paru"],ans:"Ginjal",lvl:2},
+    {q:"Berapa jumlah tulang rusuk manusia?",opts:["10","12","14","16"],ans:"12",lvl:3},
+    {q:"Indera yang digunakan untuk mencium adalah...",opts:["Mata","Telinga","Hidung","Lidah"],ans:"Hidung",lvl:1},
+    // Alam & Sains
+    {q:"Air mendidih pada suhu...",opts:["80°C","90°C","100°C","110°C"],ans:"100°C",lvl:1},
+    {q:"Planet terbesar di tata surya adalah...",opts:["Saturnus","Mars","Bumi","Jupiter"],ans:"Jupiter",lvl:1},
+    {q:"Planet paling dekat dengan Matahari adalah...",opts:["Venus","Merkurius","Bumi","Mars"],ans:"Merkurius",lvl:2},
+    {q:"Berapa planet dalam tata surya kita?",opts:["6","7","8","9"],ans:"8",lvl:1},
+    {q:"Benda langit yang mengelilingi planet disebut...",opts:["Komet","Meteor","Satelit","Asteroid"],ans:"Satelit",lvl:2},
+    {q:"Gaya yang menarik benda ke bumi disebut...",opts:["Magnet","Gravitasi","Gesek","Pegas"],ans:"Gravitasi",lvl:2},
+    {q:"Benda yang dapat ditarik magnet adalah...",opts:["Kayu","Plastik","Besi","Karet"],ans:"Besi",lvl:1},
+    {q:"Perubahan air menjadi uap disebut...",opts:["Membeku","Mencair","Menguap","Mengembun"],ans:"Menguap",lvl:2},
+    {q:"Sumber energi terbesar di bumi adalah...",opts:["Angin","Air","Matahari","Api"],ans:"Matahari",lvl:1},
+    {q:"Proses perubahan ulat jadi kupu-kupu disebut...",opts:["Evolusi","Metamorfosis","Adaptasi","Migrasi"],ans:"Metamorfosis",lvl:2},
+    {q:"Benda padat yang dipanaskan akan...",opts:["Membeku","Mencair","Menguap","Menyublim"],ans:"Mencair",lvl:1},
   ],
   geo: [
+    // Indonesia
     {q:"Ibu kota Indonesia adalah...",opts:["Surabaya","Bandung","Jakarta","Medan"],ans:"Jakarta",lvl:1},
     {q:"Gunung tertinggi di Indonesia adalah...",opts:["Gunung Merapi","Gunung Rinjani","Puncak Jaya","Gunung Semeru"],ans:"Puncak Jaya",lvl:2},
-    {q:"Indonesia memiliki berapa pulau besar?",opts:["3","4","5","6"],ans:"5",lvl:1},
     {q:"Danau terbesar di Indonesia adalah...",opts:["Danau Maninjau","Danau Toba","Danau Poso","Danau Sentani"],ans:"Danau Toba",lvl:1},
-    {q:"Benua paling luas di dunia adalah...",opts:["Amerika","Afrika","Eropa","Asia"],ans:"Asia",lvl:1},
-    {q:"Samudra terluas di dunia adalah...",opts:["Hindia","Atlantik","Pasifik","Arktik"],ans:"Pasifik",lvl:2},
     {q:"Pancasila memiliki berapa sila?",opts:["3","4","5","6"],ans:"5",lvl:1},
     {q:"Presiden pertama Indonesia adalah...",opts:["Soeharto","Habibie","Soekarno","Megawati"],ans:"Soekarno",lvl:1},
+    {q:"Indonesia merdeka pada tanggal...",opts:["17 Agustus 1945","17 Agustus 1944","17 Juli 1945","17 September 1945"],ans:"17 Agustus 1945",lvl:1},
+    {q:"Pulau terbesar di Indonesia adalah...",opts:["Jawa","Sumatera","Kalimantan","Papua"],ans:"Kalimantan",lvl:2},
+    {q:"Suku Asmat berasal dari provinsi...",opts:["Kalimantan","Sulawesi","Papua","Maluku"],ans:"Papua",lvl:2},
+    {q:"Tarian Saman berasal dari...",opts:["Jawa","Bali","Aceh","Sulawesi"],ans:"Aceh",lvl:2},
+    {q:"Rumah adat Joglo berasal dari...",opts:["Jawa","Sumatera","Bali","Kalimantan"],ans:"Jawa",lvl:2},
+    {q:"Lagu kebangsaan Indonesia adalah...",opts:["Garuda Pancasila","Halo-Halo Bandung","Indonesia Raya","Maju Tak Gentar"],ans:"Indonesia Raya",lvl:1},
+    {q:"Semboyan negara Indonesia adalah...",opts:["Bhineka Tunggal Ika","Pancasila","Garuda Pancasila","NKRI"],ans:"Bhineka Tunggal Ika",lvl:1},
+    {q:"Sungai terpanjang di Indonesia adalah...",opts:["Sungai Musi","Sungai Kapuas","Sungai Mahakam","Sungai Barito"],ans:"Sungai Kapuas",lvl:3},
+    {q:"Bahasa resmi Indonesia adalah...",opts:["Jawa","Sunda","Indonesia","Melayu"],ans:"Indonesia",lvl:1},
+    // Dunia
+    {q:"Benua paling luas di dunia adalah...",opts:["Amerika","Afrika","Eropa","Asia"],ans:"Asia",lvl:1},
+    {q:"Samudra terluas di dunia adalah...",opts:["Hindia","Atlantik","Pasifik","Arktik"],ans:"Pasifik",lvl:2},
     {q:"Bahasa resmi Brasil adalah...",opts:["Spanyol","Portugis","Inggris","Prancis"],ans:"Portugis",lvl:2},
     {q:"Tembok Besar berada di negara...",opts:["Jepang","Korea","India","China"],ans:"China",lvl:1},
     {q:"Ibu kota Australia adalah...",opts:["Sydney","Melbourne","Perth","Canberra"],ans:"Canberra",lvl:2},
+    {q:"Gunung tertinggi di dunia adalah...",opts:["Gunung K2","Gunung Everest","Gunung Kilimanjaro","Gunung Elbrus"],ans:"Gunung Everest",lvl:1},
+    {q:"Negara terluas di dunia adalah...",opts:["China","Amerika Serikat","Kanada","Rusia"],ans:"Rusia",lvl:2},
+    {q:"Ibu kota Jepang adalah...",opts:["Osaka","Kyoto","Tokyo","Hiroshima"],ans:"Tokyo",lvl:1},
+    {q:"Sungai terpanjang di dunia adalah...",opts:["Sungai Amazon","Sungai Nil","Sungai Yangtze","Sungai Mississippi"],ans:"Sungai Nil",lvl:2},
+    {q:"Benua yang tidak berpenghuni tetap adalah...",opts:["Afrika","Arktik","Antartika","Australia"],ans:"Antartika",lvl:2},
+    {q:"Negara dengan penduduk terbanyak di dunia adalah...",opts:["Amerika","Rusia","India","China"],ans:"India",lvl:2},
+    {q:"Menara Eiffel berada di kota...",opts:["London","Berlin","Roma","Paris"],ans:"Paris",lvl:1},
+    {q:"Ibu kota Amerika Serikat adalah...",opts:["New York","Los Angeles","Washington DC","Chicago"],ans:"Washington DC",lvl:2},
+    // Sejarah Indonesia
     {q:"Kerajaan terbesar dalam sejarah Indonesia adalah...",opts:["Majapahit","Sriwijaya","Mataram","Demak"],ans:"Majapahit",lvl:2},
+    {q:"Proklamasi kemerdekaan Indonesia dibacakan oleh...",opts:["Soeharto","Soekarno-Hatta","Sudirman","Diponegoro"],ans:"Soekarno-Hatta",lvl:2},
+    {q:"Pahlawan wanita dari Jepara yang memperjuangkan emansipasi adalah...",opts:["Kartini","Cut Nyak Dien","Dewi Sartika","Martha Tiahahu"],ans:"Kartini",lvl:1},
   ]
 };
+
+// ===== SHOWN QUESTIONS TRACKER (anti-pengulangan) =====
+const SHOWN_KEY = 'bk_shown_v1';
+function getShown(cat) {
+  const d = JSON.parse(localStorage.getItem(SHOWN_KEY) || '{}');
+  return d[cat] || [];
+}
+function markShown(cat, idxList) {
+  const d = JSON.parse(localStorage.getItem(SHOWN_KEY) || '{}');
+  const prev = d[cat] || [];
+  let pool;
+  if(cat==='mix') pool = [...QUESTIONS.math,...QUESTIONS.ipa,...QUESTIONS.geo];
+  else pool = QUESTIONS[cat]||[];
+  let merged = [...new Set([...prev, ...idxList])];
+  if(merged.length >= Math.floor(pool.length * 0.8)) merged = [];
+  d[cat] = merged;
+  localStorage.setItem(SHOWN_KEY, JSON.stringify(d));
+}
 
 // ===== PLAYER STORAGE =====
 const PKEY = 'bk_players_v2';
@@ -865,15 +962,25 @@ function startGame(cat){
   state.lives=3; state.correct=0; state.wrong=0;
   state.level = currentPlayer.level;
 
-  let pool = cat==='mix'
+  const shuffle = arr => { for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr; };
+
+  let fullPool = cat==='mix'
     ? [...QUESTIONS.math,...QUESTIONS.ipa,...QUESTIONS.geo]
     : [...QUESTIONS[cat]];
 
-  for(let i=pool.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [pool[i],pool[j]]=[pool[j],pool[i]];
-  }
+  // Prioritaskan soal yang belum pernah keluar
+  const shown = getShown(cat);
+  let fresh = fullPool.filter((_,i) => !shown.includes(i));
+  let used  = fullPool.filter((_,i) =>  shown.includes(i));
+  shuffle(fresh); shuffle(used);
+
+  // Fresh dulu, baru used kalau kurang dari 10
+  let pool = [...fresh, ...used];
   state.questions = pool.slice(0,10);
+
+  // Tandai soal ini sudah ditampilkan
+  const pickedIdx = state.questions.map(q => fullPool.indexOf(q));
+  markShown(cat, pickedIdx);
 
   const labels={math:'🔢 MATEMATIKA',ipa:'🔬 IPA / SAINS',geo:'🌍 PENGETAHUAN UMUM',mix:'🎲 CAMPURAN'};
   document.getElementById('cat-label').textContent = labels[cat];
